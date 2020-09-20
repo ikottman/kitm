@@ -1,0 +1,11 @@
+version: '3'
+services:
+  kitm:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=9999
+      - LOG_TO_FILE=True
+    volumes:
+      - "./logs:/opt/app/logs/"

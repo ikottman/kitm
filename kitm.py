@@ -7,13 +7,20 @@ from http import HTTPStatus
 from urllib.request import Request, urlopen
 from urllib.error import HTTPError
 
+log_to_file = os.getenv('LOG_TO_FILE', False)
+
 def log(request, response):
     message = {
         'timestamp': str(datetime.datetime.now()),
         'request': request,
         'response': response
     }
-    print(json.dumps(message, indent=2))
+    message = json.dumps(message, indent=2)
+    if log_to_file:
+        with open('logs/log.json', 'a') as f:
+            print(message, file=f)
+    else:
+        print(message)
 
 def call(url, headers, method, data=None):
     req = Request(url, data=data)
