@@ -71,6 +71,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         log(request_log('GET', url, self.headers), response_log(response.code, body, response.headers))
 
         self.send_response(response.code)
+        for header in response.headers:
+            self.send_header(header, response.headers.get(header))
         self.end_headers()
         self.wfile.write(body)
 
@@ -83,6 +85,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         log(request_log('POST', url, self.headers), response_log(response.code, body, response.headers))
 
         self.send_response(response.code)
+        for header in response.headers:
+            self.send_header(header, response.headers.get(header))
         self.end_headers()
         self.wfile.write(body)
 
@@ -95,6 +99,8 @@ class Handler(http.server.SimpleHTTPRequestHandler):
         log(request_log('POST', url, self.headers), response_log(response.code, body, response.headers))
 
         self.send_response(response.code)
+        for header in response.headers:
+            self.send_header(header, response.headers.get(header))
         self.end_headers()
         self.wfile.write(body)
 
