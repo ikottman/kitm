@@ -47,18 +47,17 @@ def is_json(val):
     return False
   return True
 
-def response_log(response):
-    body = response.read() or None
-
+def response_log(code, body, headers):
+    log_body = None
     if is_json(body):
-        body = json.loads(body)
+        log_body = json.loads(body)
     else:
-        body = str(body)
+        log_body = str(body)
 
     return {
-        'status': response.code,
-        'body': body,
-        'headers': [{ header: response.headers.get(header) } for header in response.headers]
+        'status': code,
+        'body': log_body,
+        'headers': [{ header: headers.get(header) } for header in headers]
     }
 
 def build_url(path):
@@ -68,33 +67,36 @@ class Handler(http.server.SimpleHTTPRequestHandler):
     def do_GET(self):
         url = build_url(self.path)
         response = call(url, self.headers, 'GET')
-        log(request_log('GET', url, self.headers), response_log(response))
+        body = response.read()
+        log(request_log('GET', url, self.headers), response_log(response.code, body, response.headers))
 
         self.send_response(response.code)
         self.end_headers()
-        self.wfile.write(response.read())
+        self.wfile.write(body)
 
     def do_POST(self):
         content_length = int(self.headers['Content-Length'])
-        body = self.rfile.read(content_length)
+        request_body = self.rfile.read(content_length)
         url = build_url(self.path)
-        response = call(url, self.headers, 'POST', body)
-        log(request_log('POST', url, self.headers), response_log(response))
+        response = call(url, self.headers, 'POST', request_body)
+        body = response.read()
+        log(request_log('POST', url, self.headers), response_log(response.code, body, response.headers))
 
         self.send_response(response.code)
         self.end_headers()
-        self.wfile.write(response.read())
+        self.wfile.write(body)
 
     def do_PUT(self):
         content_length = int(self.headers['Content-Length'])
-        body = self.rfile.read(content_length)
+        request_body = self.rfile.read(content_length)
         url = build_url(self.path)
-        response = call(url, self.headers, 'POST', body)
-        log(request_log('POST', url, self.headers), response_log(response))
+        response = call(url, self.headers, 'POST', request_body)
+        body = response.read()
+        log(request_log('POST', url, self.headers), response_log(response.code, body, response.headers))
 
         self.send_response(response.code)
         self.end_headers()
-        self.wfile.write(response.read())
+        self.wfile.write(body)
 
     def log_message(self, format, *args):
         # disable built in access logs

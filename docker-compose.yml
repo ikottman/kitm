@@ -5,7 +5,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - PORT=9999
+      - PORT=8080
       - LOG_TO_FILE=True
     volumes:
       - "./logs:/opt/app/logs/"
